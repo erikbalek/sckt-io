@@ -3,7 +3,24 @@
   "version": "0.0.1",
   "description": "Testing socket.io app",
   "dependencies": {
-    "express": "^4.15.2",
+    "express": "^4.16.2",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "socket.io": "^2.0.4"
-  }
+  },
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erikbalek/sckt-io.git"
+  },
+  "author": "erikbalek",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/erikbalek/sckt-io/issues"
+  },
+  "homepage": "https://github.com/erikbalek/sckt-io#readme"
 }

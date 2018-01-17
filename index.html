@@ -1,76 +1,87 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Socket.IO chat</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
-      #mess-form { display: none; }
-      .typing { font-style: italic; }
-      .user { font-weight: bold; }
-    </style>
-  </head>
-  <body>
-    <ul id="messages"></ul>
-    <form action="" id="nick-form">
-      <input id="nick"  autocomplete="off" placeholder="Nickname"/><button>Send</button>
-    </form>
-    <form action="" id="mess-form">
-      <input id="m" autocomplete="off" placeholder="Message"/><button>Send</button>
-    </form>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<head>
+  <title>Socket.IO chat</title>
+  <link rel="stylesheet" href="chat.css" />
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/react/16.2.0/umd/react.development.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.2.0/umd/react-dom.development.js"></script>
+<!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/6.1.19/browser.min.js"></script>-->
+</head>
 
-    <script>
-      $(function () {
+<body>
+  <div id="chat-container">
+    <div id="chat-users">Users
+      <div id="usr-react-app"></div>
+    </div>
+    <div id="chat-display">
+      <ul id="messages"></ul>
+      <form action="" id="nick-form">
+        <input id="nick" autocomplete="off" placeholder="Nickname" /><button>Send</button>
+      </form>
+      <form action="" id="mess-form">
+        <input id="m" autocomplete="off" placeholder="Message" /><button>Send</button>
+      </form>
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
-        var socket = io('/chat');
-        // var usrId = Math.random().toString(16) + Date.now().toString();
-        // console.log(usrId);
-        var nick;
+            <script>
+ // jquery chat, no react
+$(function() {
+            var socket = io('/chat');
+            var nick;
+            var nicks = [];
 
-        $('#nick-form').submit(function(){
-          nick = $('#nick').val();
-          console.log('Nick: ' + nick)
-          $('#nick-form').hide();
-          $('#mess-form').show();
-          $('#m').focus();
-          return false;
-        });
+            $('#nick-form').submit(function() {
+              var n = $('#nick').val();
+              if (nicks.indexOf(n) > 0) {
 
-        $('#m').keypress(function() {
-          //console.log('typing...');
-          socket.emit('typing', nick + ' is typing...')});
+              } else {
+                nicks.push(n); // on disconnects, then...
+                nick = $('#nick').val();
+                console.log('Nick: ' + nick)
+                $('#nick-form').hide();
+                $('#mess-form').show();
+                $('#m').focus();
+                //React.renderComponent(<ChatUser({users: nicks}), document.getElementById('usr-react-app'))
+              }
+              return false;
+            });
 
-        $('#mess-form').submit(function(){
-          console.log(nick + ' submits: ' + $('#m').val());
-          socket.emit('chatMessage', {'user': nick, 'txt': $('#m').val()});
-          $('#m').val('');
-          return false;
-        });
-        socket.on('chatMessage', function(msg){
-          console.log('on chatMessage from ' + msg.user + ': ' + msg.txt);
-          // $('.typing').replaceWith()
-          $('.typing').remove();
-          $('#messages').append($('<li>')
-            .append($('<span class="user">').text(msg.user + ': '))
-            .append($('<span>').text(msg.txt))
-          );
-        });
-        socket.on('typing', function(msg){
-         console.log('client typing');
-          if ($('.typing').length == 0) {
-            $('#messages').append($('<li class="typing">').text(msg));
-          }
-        });
-      });
-    </script>
-  </body>
+            $('#m').keypress(function() {
+              //console.log('typing...');
+              socket.emit('typing', nick + ' is typing...')
+            });
+
+            $('#mess-form').submit(function() {
+              console.log(nick + ' submits: ' + $('#m').val());
+              socket.emit('chatMessage', {
+                'user': nick,
+                'txt': $('#m').val()
+              });
+              $('#m').val('');
+              return false;
+            });
+            socket.on('chatMessage', function(msg) {
+              console.log('on chatMessage from ' + msg.user + ': ' + msg.txt);
+              // $('.typing').replaceWith()
+              $('.typing').remove();
+              $('#messages').append($('<li>')
+                .append($('<span class="user">').text(msg.user + ': '))
+                .append($('<span>').text(msg.txt))
+              );
+            });
+            socket.on('typing', function(msg) {
+              console.log('client typing');
+              if ($('.typing').length == 0) {
+                $('#messages').append($('<li class="typing">').text(msg));
+              }
+            });
+          });
+  </script>
+  <script src="react-builds/bChat.js"></script>
+</body>
+
 </html>

@@ -1,4 +1,9 @@
-var app = require('express')();
+var express = require('express'),app = express();
+var root = __dirname;
+app.use(express.static('css'));
+app.use('/react-builds', express.static('build')); //jsx compiled builds referenced at /react-builds, needs slash
+//app.use('/react', express.static('react'));  //how to use browser jsx?
+
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
